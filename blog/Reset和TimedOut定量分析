@@ -1,0 +1,16 @@
+Reset和TimedOut
+
+Connection reset 是由于机器拉起来了，然后connection没了，导致connection reset
+22:32:37
+retransmit_timer
+由于最后的重传时间是120即2min，所以在机器拉起来之后，还没有重传之间，就到了RTT算出来的最大时间,报connection timed out
+tcp_retries=15=>TCP_MAX_RTO=120HZ即120s,TCP_MIN_RTO=1/5HZ,即200ms
+Connection timed out 
+22:34:12
+
+				<--------  2min  --->
+down机	重传		|    重传			重传
+|---------------------|---------|
+				  |	reset  timed_out
+				  |
+				拉起来

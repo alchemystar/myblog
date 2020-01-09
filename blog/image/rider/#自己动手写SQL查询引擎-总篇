@@ -1,0 +1,18 @@
+#自己动手写SQL查询引擎-总篇
+## 起因    
+笔者在实际工作中经常需要解析文件，每次文件稍有变化，都得拷贝粘贴一堆代码。      
+于是就想着能不能做一个通用的服务，通过配置的方式解析文件。         
+### 配置通用     
+最通用的方法就是自己定义一个文件描述语言，用语言去描述文件的组织结构。但如果自己定义一套新的语法，学习成本则太高。       
+于是就想到了数据库，数据库是通过create table来表示文件格式的，且通过sql来查询底层数据。     
+这个create table和select操作和我的需求match,就这样SQL查询引擎Rider诞生了。    
+## SQL查询引擎Rider
+Rider是一个基于Netty通讯框架的纯java写的Server,其不依赖其它任何服务。其主要功能如下图所示:         
+![codegen](/Users/alchemystar/image/rider/rider_func.png)     
+(1)Rider基于MySql协议和用户交互，用户可以使用mysqlClient、jdbc以及odbc等对Rider发送SQL命令   
+(2)Rider支持select join where condition、create table等语法   
+(3)Rider支持MyBatis   
+## Rider总体设计图   
+
+## github链接     
+https://github.com/alchemystar/Rider

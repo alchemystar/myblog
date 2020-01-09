@@ -1,0 +1,171 @@
+sysctl_tcp_slow_start_after_idle
+
+
+
+
+1>商业ip安全选项
+CIPSO - Commercial IP Security Option
+1.cipso_cache_bucket_size=>cipso hash table 
+2.cipso_cache_enable=>是否开启cipsocache
+3.cipso_rbm_optfmt=>是否进行优化
+4.cipso_rbm_strictvalid=>是否开启严格检测
+
+
+2>inet_peer 就是记录对端ip的一些信息，例如多个tcp socket共享一个inet_peer
+如果这个ip的socket都被关闭后，就会放入unused队列，又下面几个参数控制gc删除,
+内存足够的情况下，会留下来复用以增强性能
+1.inet_peer_gc_maxtime
+2.inet_peer_gc_mintime
+3.inet_peer_maxttl
+4.inet_peer_minttl
+
+3>ip_default_ttl 最多过多少个路由器被丢弃,default 64
+ip_forward 允许当做路由转发
+ip_dynaddr 允许动态ip地址
+
+
+4>
+ip碎片(待组装)的buffer上下限，一但超过了上限，就把最oldest的给驱逐，直到达到下限为止
+ipfrag_high_thresh
+ipfrag_low_thresh
+ipfrag_max_dist
+ipfrag_max_dist ip序列后的end-start > ipfrag_max_dist则把这一段ip queue给干掉
+ipfrag_secret_interval 重新混淆(洗牌)hash因子 rtable 路由表的hash
+ipfrag_time ip碎片在内存中的存活时间
+ip_local_port_range 本地local port的范围
+ip_local_reserved_ports 预留port,逗号分开。自动分配的时候会避开这些端口号，但是直接指定端口号例如8080就可以
+ip_nonlocal_bind 默认为0，为1的话表明可以绑定非本机的ip地址，在lvs等有用
+ip_no_pmtu_disc 是否开启MTU探测
+ping_group_range icmp套接字的组ID的范围，默认没有能够使用icmp套接字,改成ping_group_range='0 10'后可用
+
+5> 
+rt_cache_rebuild_count
+	设置为-1之后，可以用多条路由线路进行download，可以让多线程下载加速！
+	routing cache是以带bucket的散列表的形式来存放的。当bucket大长，散列冲突太多，超过这一限定值时，为了效率就进行一次rebuild。当这种情况发生许多次时，内核会认为routing cache没有起到应有的作用，于是禁用掉routing cache。禁用掉routing cache！这样，如果有多条路由线路的时候就会都启用。否则，只会用cache的那一条！
+	解决方法是简单地将这一参数设置成-1，这样任何长度的bucket都会触发rebuild，进而禁用掉routing cache
+
+6>
+tcp_abc 默认0不使用，分为0/1/2,启用的时候，拥塞窗口会涨的更慢
+tcp_abort_on_overflow 连接建立队列满之后丢弃时发送reset信息
+tcp_adv_win_scale
+	以tcp接收缓存为例（实际上发送窗口=对方的接收窗口），tcp接收缓存有2部分组成：接收窗口及应用缓存，应用缓存用于应用的延时读及一些调度信息。linux使用net.ipv4.tcp_adv_win_scale（对应文件/proc/sys/net/ipv4/tcp_adv_win_scale）指出应用缓存的比例。
+	f tcp_adv_win_scale > 0: 应用缓存 = buffer / (2^tcp_adv_win_scale)，tcp_adv_win_scale默认值为2，表示缓存的四分之一用于应用缓存，可用接收窗口占四分之三。
+	if tcp_adv_win_scale <= 0: 应用缓存 = buffer - buffer/2^(-tcp_adv_win_scale)，即接收窗口=buffer/2^(-tcp_adv_win_scale)，如果tcp_adv_win_scale=-2，接收窗口占接收缓存的四分之一。
+tcp_allowed_congestion_control 可选的拥塞控制算法，是tcp_available_congestion_control的子集
+tcp_congestion_control 当前拥塞控制算法
+tcp_available_congestion_control 可用的拥塞控制算法，是tcp_allowed_congestion_control的超集
+tcp_app_win 在应用缓冲中为窗口保留多少比特max(window/2^tcp_app_win,mss)
+tcp_base_mss 在MTU探测的使用从tcp_base_mss开始，默认512
+tcp_challenge_ack_limit 
+	chanllenge_ack,防syn攻击的一种ack,接收方收到SYN包后，无论序列号如何，都会回传一则challenge ACK报文。否则在传输过程中，一个syn会导致正常连接重置。
+	对方在收到challenge ACK之后，会发出一个RST包，其中就带有“正确的”序列号，证明先前的连接的确是丢失了。为了减少CPU和带宽资源浪费，所以要限制challenge ACK发出的数量
+	默认100，即每秒发送100个。
+tcp_dma_copybreak 如果tcp_recvmsg>于此值，则会由dma 直接拷贝来接管。如果内核编译了DMA的话。
+tcp_dsack sack选择性重传，dsack允许发送重复的sack
+tcp_ecn 默认为2 ，即在server端允许显示的拥塞通知。
+tcp_fack 快速重传
+tcp_fin_timeout fin_wait_2状态保持的时间
+tcp_frto
+	F-RTO检测超时重传之后的至少两个ack信息，如果收到的非重传数据的ack/sack，则显然是延迟到达对方，RTO超时是误判。提高性能，作用于无线网
+	这种由于信号干扰而不是信道阻塞的情况
+tcp_frto_response
+	当frto被检测到之后，默认为0，直接清除掉对窗口的拥塞控制。cwnd and ssthresh恢复到之前超时的值。
+tcp_keepalive_intvl 保活定时器探测间隔
+tcp_keepalive_probes 保活定时器探测次数
+tcp_keepalive_time 保活定时器超时时间，超时后开启探测
+tcp_limit_output_bytes
+	TCP在发送大量的数据时，倾向于尽可能多的进行发送直到检测到丢包。这将导致发送设备或者Qdisc流控队列（例如pfifo_fast）中填充大量数据包，势必增大其它流量的延迟时间。tcp_limit_output_bytes参数限制了Qdisc队列或者设备队列中的数据量，以缓解此状况，达到减低队列的内存膨胀bufferbloat和由其所导致的异常RTT时间的作用。
+tcp_low_latency
+	如果是sysctl_tcp_low_latency=1，则不处理已有ucopy中的数据没直接tcp_v4_do_rcv这样就可以有低传输延迟。  反之，先优先处理存在于prequeue中的buffer,这样应用层就可以尽快响应(尽快调用sk->sk_data_ready(sk, 0);)
+tcp_max_orphans 不属于任何进程的tcp socket的数量
+tcp_max_ssthresh 慢启动阈值，默认为0
+	tcp_max_ssthresh=0。这个值表示慢启动阈值。如果拥塞窗口的值cwnd小于阈值ssthresh，那么表示在慢启动阶段；如果拥塞窗口的值cwnd大于阈值ssthresh，那么表示在拥塞避免阶段，此时拥塞窗口cwnd不再像慢启动阶段那样呈指数级整整，而是趋向于线性增长，以期避免网络拥塞。
+tcp_max_syn_backlog
+	tcp连接队列长度，由min(somaxconn,tcp_max_syn_backlog,应用listen中指定的backlog)决定
+tcp_max_tw_buckets 内核能够存在的最大time_wait socket的数量
+tcp_mem 启动时候计算 min,pressure,max min没达到这个值的时候无限制,pressure到达此时tcp会进入pressure mode限制内存耗用量,max 最大tcp socket占用内存
+tcp_min_tso_segs tso帧中最小的段数量
+	名词解释
+	TSO(TCP Segmentation Offload): 是一种利用网卡来对大数据包进行自动分段，降低CPU负载的技术。 其主要是延迟分段。
+	GSO(Generic Segmentation Offload): GSO是协议栈是否推迟分段，在发送到网卡之前判断网卡是否支持TSO，如果网卡支持TSO则让网卡分段，否则协议栈分完段再交给驱动。 如果TSO开启，GSO会自动开启。
+tcp_moderate_rcvbuf tcp会对receive buffer进行自动调优
+tcp_mtu_probing tcp层面是否开启mtu探测
+tcp_no_metrics_save 默认不开启，开启后在正在关闭的连接中不缓存任何度量
+tcp_orphan_retries 默认为7，但是线上设置为0，就是在向client告诉关闭socket,如果client不回复,尝试n次，0代表再尝试0次
+tcp_reordering tcp流中 乱序包的最大数量
+tcp_retrans_collapse
+	这个参数控制TCP双方Window协商出现错误的时候的一些重传的行为。但是在老的2.6的核 （<2.6.18）里头，这个重传会导致kernel oops，kernel panic，所以，如果出现有 tcp_retrans_*样子的kernel panic，可以把这个参数给设置成0：
+	echo '0' > /proc/sys/net/ipv4/tcp_retrans_collapse
+tcp_retries1 超过次数后(或等效时间)清空路由cache
+tcp_retries2 超过次数后(或等效时间)tcp socket报错sk_err
+tcp_rfc1337
+	如果设置了该选项,我们将符合RFC 1337并丢弃RST数据包,从而阻止了TIME-WAIT Assassination.如果该选项未设置(默认),我们不符合RFC 1337易受TIME-WAIT暗杀的影响.
+tcp_rmem
+	最小值，默认值，最大值。默认值是根据window大小为65535算出来。在pressure mode下，最小值也会被确保。tcp_moderate_rcvbuf会对rmem调优
+sysctl_tcp_slow_start_after_idle
+	一个rto之后，重新进入慢启动。。。。默认为1，其实不应该设置！！！！！！！！！！！！！！这个值貌似设置的有点搓
+tcp_stdurg
+	tcp标准紧急标志位，默认不开启，开启了可能和老的BSD系统的紧急标志有冲突。。。
+tcp_synack_retries synack重传次数
+tcp_syncookies 启用syn cookies抑制泛洪攻击
+tcp_thin_dupack 
+	默认是0,一次操作中需要传输的数据包一般比较少，这一类数据流我们就称呼为thin stream
+	当该开关打开的时候，只需要一个dup ACK且缓存中没有待发送数据就可以触发快速重传
+tcp_thin_linear_timouts
+	当该参数打开的时候，前6次RTO超时触发的重传并不进行指数回退。即前6次不指数增加RTO的下一次重传时间
+	if (sk->sk_state == TCP_ESTABLISHED &&
+	    (tp->thin_lto || sysctl_tcp_thin_linear_timeouts) &&
+	    tcp_stream_is_thin(tp) &&
+	    icsk->icsk_retransmits <= TCP_THIN_LINEAR_RETRIES) {
+		icsk->icsk_backoff = 0;
+		icsk->icsk_rto = min(__tcp_set_rto(tp), TCP_RTO_MAX);
+	} else {
+		/* Use normal (exponential) backoff */
+		icsk->icsk_rto = min(icsk->icsk_rto << 1, TCP_RTO_MAX);
+	}
+tcp_timestamps 是否开启tcp时间戳	
+tcp_tso_win_divisor 单个TSO段可消耗拥塞窗口的比例,默认值为3
+tcp_tw_recycle time_wait回收，已经被废弃
+tcp_tw_reuse 重用time_wait可开启 
+	tw_reuse是在主动发起关闭的那端去reuse tw_wait的sock。有效的方式仅仅在A主动连接B,同时A主动关闭和B的连接情况下，设置A服务器的tw_reuse才有效果。
+tcp_window_scaling 允许tcp窗口扩展因子
+tcp_wmem 写buffer大小,(min,default 16k,max)
+tcp_workaround_signed_windows 如果设置了，则如果没有窗口scaling因子，则broken pipe。否则，不broken
+udp_mem min,default,max 由启动时计算,所有udp的内存用量
+udp_rmem_min udp socket连接的最小读buffer，在高压力下也保持
+udp_wmem_min udp socket连接的最小写buffer，在高压力下也保持
+xfrm4_gc_thresh
+	(linux-4.14已经过期了)如果达到了这个限制我们就开始对ipv4的目的cache条目进行回收。如果达到了*2系统就会拒绝新的分配。
+
+
+
+
+
+
+n> icmp internet控制报文协议
+icmp_echo_ignore_all 不响应任何icmp消息
+icmp_echo_ignore_broadcasts 不响应任何广播的icmp消息
+icmp_errors_use_inbound_ifaddr 在icmp发生错误的时候将interface即哪个端口(例如eth0)带回去
+igmp_max_memberships 可订阅的最大组播数量
+igmp_max_msf  一个组播组中源过滤器中最大地址数量
+icmp_ratelimit default 1000
+	默认值是100 Jiffie
+	限制发向特定目标的匹配icmp_ratemask的ICMP数据报的最大速率。0表示没有任何限制，否则表示jiffies数据单位中允许发送的个数。(如果在icmp_ratemask进行相应的设置Echo Request的标志位掩码设置为1,那么就可以很容易地做到ping回应的速度限制了)
+icmp_ratemask : INTEGER
+	在这里匹配的ICMP被icmp_ratelimit参数限制速率.
+	匹配的标志位: ＩＨＧＦＥＤＣＢＡ９８７６５４３２１０
+	默认的掩码值: ００００００１１００００００１１０００ (6168)
+	关于标志位的设置,可参考 源程序目录/include/linux/icmp.h
+	0 Echo Reply
+	3 Destination Unreachable *
+	4 Source Quench *
+	5 Redirect
+	8 Echo Request
+	B Time Exceeded *
+	C Parameter Problem *
+	D Timestamp Request
+	E Timestamp Reply
+	F Info Request
+	G Info Reply
+	H Address Mask Request
+	I Address Mask Reply

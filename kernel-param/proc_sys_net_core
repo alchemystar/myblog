@@ -1,0 +1,32 @@
+dev_weight 默认64
+	一个NAPI中断里面可以处理的packet的最大数量，这是一个Per-CPU 变量
+netdev_budget 默认300
+	一个polling循环里面可以从所有网口接收的最大的packet数量
+rmem_default
+	默认的read buffer大小
+somaxconn
+	全连接队列大小
+wmem_max
+	最大write buffer bytes
+xfrm_aevent_rseqth
+	xfrm模块(网络安全架构)参数的默认值
+xfrm_acq_expires
+	xfrm请求超时事件
+xfrm_larval_drop
+	设置了这个以后当ipsec过来
+message_burst
+	防止kernel日志中warning太多
+message_cost
+	防止kernel日志中warning太多
+netdev_max_backlog
+	在input侧的排队包的最大值
+rmem_max
+	读buffer的最大值
+warnings
+	默认为1，如果设为0就可以不打印日志stack
+optmem_max
+	每个socket的最大辅助buffer大小
+rps_sock_flow_entries
+	预测的并发连接最大数量
+wmem_default
+	默认的写buffer大小

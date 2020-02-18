@@ -1,0 +1,13 @@
+ip6frag_high_thresh
+ip6frag_low_thresh
+	ip碎片(待组装)的buffer上下限，一但超过了上限，就把最oldest的给驱逐，直到达到下限为止
+ip6frag_secret_interval 
+	重新混淆(洗牌)hash因子 rtable 路由表的hash
+ipfrag_time 
+	ip碎片在内存中的存活时间
+mld_max_msf
+	源过滤器中最大地址数量
+xfrm4_gc_thresh
+	(linux-4.14已经过期了)如果达到了这个限制我们就开始对ipv4的目的cache条目进行回收。如果达到了*2系统就会拒绝新的分配。
+bindv6only
+	是否只绑定ipv6

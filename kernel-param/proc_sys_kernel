@@ -1,0 +1,13 @@
+acct default 4 2 30
+	<= 2% 就会挂起审计
+	>= 4% 就会重新审计
+	>=30 探测空闲空间频率
+acpi_video_flags
+	video启动设置
+auto_msgmni
+	在内存增加或者删除的时候重新计算msg消息队列长度
+blk_iopoll
+	对块存储设备启用类似NAPI的机制
+	add blk-iopoll, a NAPI like approach for block devices	
+msgmni
+	消息队列长度

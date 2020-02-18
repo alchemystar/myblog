@@ -1,0 +1,150 @@
+block_dump:
+	for IO debug
+compact_memory
+	内存规整，即内存碎片整理
+
+下面两仅仅有一个有效
+dirty_background_bytes
+	默认值为0， 触发pdflush后台回写的脏存储器量；
+dirty_background_ratio
+	默认值10， 触发pdflush后台回写脏系统存储器百分比；
+
+下面两仅仅有一个有效
+dirty_bytes：默认值为0，触发一个写入进程开始回写的脏存储器量
+dirty_ratio：默认值为20，触发一个写入进程开始回写的脏系统存储器比例
+
+dirty_expire_centisecs：
+	默认值为3000，使用pdflush的脏存储器最小时间
+dirty_writeback_centisecs：
+	默认值为500，pdflush活跃时间间隔(0为停用)；
+drop_caches:
+	干掉所有的缓存
+	To free pagecache:
+		echo 1 > /proc/sys/vm/drop_caches
+	To free dentries and inodes:
+		echo 2 > /proc/sys/vm/drop_caches
+	To free pagecache, dentries and inodes:
+		echo 3 > /proc/sys/vm/drop_caches
+extfrag_thresold:
+	默认500
+	这个参数是一个0 ~ 1000的整数. 如果出现内存不够用的情况, Linux会为当前系统的内存碎片情况打一个分, 如果超过了extfrag_threshold这个值, kswapd就会触发memory compaction .  所以, 这个值设置接近1000, 说明系统在内存碎片的处理倾向于把旧的页换出, 以符合申请的需要; 而设置接近0, 表示系统在内存碎片的处理倾向于做memory compaction.
+extra_free_kbytes
+	告诉vm系统在background reclaim(kswapd)到达的时候保留额外的free memory
+	在low latency内存分配的时候好用
+hugepages_treat_as_movable
+	hugepages_treat_as_movable允许大业在ZONE_MOVEABLE里面分配
+hugetlb_shm_group
+	允许大页后备缓冲区的groud id
+laptop_mode	
+	笔记本模式
+legacy_va_layout
+	传统内存布局
+lowmem_reserve_ratio
+	保存在zone low里面的内存比例，是个数组，比较复杂的算法
+max_map_count
+	一个进程所能包含的最大 memory map area(内存映射区域)的个数
+memory_failure_early_kill
+	当出现uncorrected memory错误的时候,神马情况干掉这个进程
+	如果值是1: 如果拥有correupted同时无法重新加载的page,在发现的时候，干掉这个进程。
+		注意，在内核内部的数据以及swap cache的时候不会生效，大多数是用户页生效
+	如果值是0: 发现错误的时候先只map掉这个page，然后如果这个进程想访问这个页才干掉
+memory_failure_recovery
+	是否开启内存恢复
+min_free_kbytes
+	让linux vm系统保留最小的kbytes数
+min_slab_ratio
+	只在numa内核上可用。如果一个内存域中可以回收的slab页面所占的百分比（应该是相对于当前内存域的所有页面）超过min_slab_ratio，在回收区的slabs会被回收。这样可以确保即使在很少执行全局回收的NUMA系统中，slab的增长也是可控的。
+min_unmapped_ratio
+	只有在当前内存域中处于zone_reclaim_mode允许回收状态的内存页所占的百分比超过min_unmapped_ratio时，内存域才会执行回收操作。
+mmap_min_addr
+	mmap可使用的最小虚拟内存地址，以避免其在低地址空间产生映射导致安全问题
+nr_hugepages
+	大业缓冲区的数量
+nr_hugepages_mempolicy
+	这个接口相对落后，请使用单个NUMA node的HugePages的分配代替。/proc/sys/vm/nr_hugepages_mempolicy用于设定多个NUMA node的HugePages个数，可读可写。
+nr_overcommit_hugepages
+	大页内存池的最大大小. The maximum is nr_hugepages + nr_overcommit_hugepages.
+nr_pdflush_threads
+	当前pdflush内核进程数量
+numa_zonelist_order
+	仅NUMA可用，确定了内存分配优先选择的ZONE顺序
+oom_dump_tasks
+	oom_dump_tasks，OOM killer被触发的时候，输出进程信息
+oom_kill_allocating_task
+	如果设为0，则按系统打分来算
+	如果设为非0,li如1,则直接kill调触发oom的进程
+overcommit_memory
+	是否允许overcommit_memory,即内存过量提交
+	0,内核尝试去评估空闲内存的数量
+	1.kernel在进程真正使用之前假装永远有足够的内存
+	2.不允许over commit
+overcommit_ratio
+	只有当 overcommit_memory = 2 的时候才会生效
+	不允许超过swap大小+物理内存量 * overcommit_ratio(默认50%),还有50%的内存被认为是内核之类使用而保留的
+page-cluster
+	默认为3
+	用来控制从swap空间换入数据的时候，一次连续读取的页数，这相当于对交换空间的预读。这个文件中设置的值是2的指数。就是说，如果设置为0，预读的swap页数是2的0次方，等于1页。如果设置为3，就是2的3次方，等于8页。同时，设置为0也意味着关闭预读功能。
+panic_on_oom
+	设置为0,内存不够时运行oom_killer
+	设置为1,在某些情况下运行oom_killer，其它情况内核panic
+	设置为2,强制内核panic
+
+	panic时候，一般会打内核栈
+	/var/log/messages: 幸运的时候，整个kernel panic栈跟踪信息都能记录在这里
+	终端dump
+percpu_pagelist_fraction
+	每个cpu的percpu 页面列表中允许的最大的占zone的内存的数量，默认是1/8,如果设为100,则是1/100
+scan_unevictable_pages
+	没什么说明，看代码和名字应该是是否去扫描不可驱逐的内存页
+stat_interval
+	统计数据的更新时间间隔，默认是1秒
+swappiness
+	默认是60，内核是否使用swap的倾向性，越大越倾向于使用swap
+unmap_area_factor
+	没文档，看代码所得
+	如果为0，使用first-fit内存算法
+	如果非0，要更高的时间效率(但是更加浪费内存)的next-fit算法
+vfs_cache_pressure
+	默认100
+	该文件表示内核回收用于directory和inode cache内存的倾向；缺省值100表示内核将根据pagecache和swapcache，把directory和inode cache保持在一个合理的百分比；降低该值低于100，将导致内核倾向于保留directory和inode cache；增加该值超过100，将导致内核倾向于回收directory和inode cache。
+would_have_oomkilled
+	默认0
+	为1时并不会真正杀死oom killer选中进程，只是打印一条警告信息 
+	kernel代码里面有这个判断 == 1 ,则print 然后return 0
+zone_reclaim_mode
+	内核在当前zone内没有足够内存可用的情况下，会根据zone_reclaim_mode的设置来决策是从下一个zone找空闲内存还是在zone内部进行回收。这个值为0时表示可以从下一个zone找可用内存，非0表示在本地回收。
+	echo 0 > /proc/sys/vm/zone_reclaim_mode：意味着关闭zone_reclaim模式，可以从其他zone或NUMA节点回收内存。
+	echo 1 > /proc/sys/vm/zone_reclaim_mode：表示打开zone_reclaim模式，这样内存回收只会发生在本地节点内。
+	echo 2 > /proc/sys/vm/zone_reclaim_mode：在本地回收内存时，可以将cache中的脏数据写回硬盘，以回收内存。
+	echo 4 > /proc/sys/vm/zone_reclaim_mode：可以用swap方式回收内存。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

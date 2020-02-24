@@ -1,3 +1,5 @@
+todo a lot 
+
 acct default 4 2 30
 	<= 2% 就会挂起审计
 	>= 4% 就会重新审计
@@ -9,5 +11,251 @@ auto_msgmni
 blk_iopoll
 	对块存储设备启用类似NAPI的机制
 	add blk-iopoll, a NAPI like approach for block devices	
+bootloader_type
+	bootloader类型
+bootloader_version
+	bootloader版本
+cad_pid
+	是否能用使用ctrl-alt-del重启机器,默认是yes
+compcat-log
+	是否打印兼容日志，默认是1。在内核的仅有几处控制是否真正执行打印语句
+core_pattern
+	core dump的名字模式，例如在名字里面可以加入pid/time之类	
+core_pipe_limit
+	定义了可以有多少个并发的崩溃程序可以通过管道模式传递给指定的core信息收集程序，如果超过，异常信息将被丢弃。0表示不限制并行捕捉的进程个数。
+core_uses_pid
+	设置为1后，coredump文件名就会从core变为core.pid
+ctrl-alt-del	
+	设为0，则为优雅重启。如果>0,立马重启，连刷入脏buffer这个动作都不做。
+dmesg_restrict
+	开关决定了是否非特权用户可以看到dmesg,默认是0
+domainname
+	此参数可以设置域名
+exec-shield
+	开启exec-shield功能，即执行程序保护功能,redhat系有，例如开启后会对某些base加一下段偏移
+exec-shield-randomize 
+	设为1，开启随机VM映射
+ftrace_dump_on_oops
+	是否在core dump的时候运行ftrace
+ftrace_enabled
+	是否启用ftrace
+hostname
+	主机名
+hotplug
+	 /proc/sys/kernel/hotplug 热插拔对应的用户态空间程序
+hung_task_check_count
+	最大检查task数量
+hung_task_panic
+	是否在检测到hung后panic
+hung_task_timeout_secs
+	hung task 超时时间
+hung_task_warnings
+	打印hung warning的次数，默认值是10
+io_delay_type
+	设置IO延迟方式
+	0x80(CONFIG_IO_DELAY_0X80) 传统的Linux IO延迟方式,久经考验,也最安全
+	0xed(CONFIG_IO_DELAY_0XED) 基于0xed端口的IO延迟方式,主要是为了避免和基于0x80端口的主板诊断卡冲突
+	udelay(CONFIG_IO_DELAY_UDELAY) 使用内核端udelay()函数作为延迟方法(简单的延迟2微秒).可以不占用任何IO端口空间.
+	none(CONFIG_IO_DELAY_NONE) 不使用任何port-IO延迟机制.只要你的机器不是老古董,这个应该是首选.
+kexec_load_disabled
+	是否禁用kexec
+keys
+	gc_delay,maxbytes,maxkeys,root_maxbytes,root_maxkeys。
+	关于/proc/keys的一系列gc参数
+	/proc/keys 允许有权限的进程通过/proc/keys读取所有的key
+kptr_restrict
+	变量kptr_restrict是可以用来限制内核地址的打印，当kptr_restrict=0时，会直接打印内核地址（%p和%pK效果一样）；当kptr_restrict=1时，若在中断上下文或软中断时，%pK打印“pK-error”，否则内核地址打印全0；当kptr_restrict=2时，%pK打印内核地址为全0；而内核地址以%p打印时无论在什么情况下都会以HASH地址方式打印，而%pK可以通过 变量kptr_restrict隐藏内核地址，防止内核地址泄漏。
+kstack_depth_to_print
+	在打印内核栈的时候，最多打印多少深度
+max_lock_depth
+	lock的最大深度,防止循环lock
+modprobe
+	modprobe的路径
+modules_disabled
+	是否允许加载module
+msgmax
+	一个消息的最大大小
+msgmnb
+	队列存放消息的总字节数
 msgmni
 	消息队列长度
+ngroups_max
+	进程同时拥有的组IDs的最大个数
+nmi_watchdog
+	NMI（Non Maskable Interrupt）即不可屏蔽中断，之所以要使用NMI，是因为NMI watchdog的监视目标是整个内核，而内核可能发生在关中断同时陷入死循环的错误，此时只有NMI能拯救它。
+	I/O APIC watchdog（nmi_watchdog=1）和Local APIC watchdog（nmi_watchdog=2）
+osrelease
+	内核版本
+ostype
+	内核类型 Linux
+overflowgid
+	for16位 溢出gid值
+overflowuid
+	for16位 溢出uid值
+panic
+	kernel panic时,系统在N秒后reboot;
+panic_on_oops
+	在oops或者内核bug发生的时候panic
+panic_on_unrecovered_nmi
+	在无法恢复的nmi的时候panic
+perf_event_max_sample_rate
+	perf_event的最大速率
+perf_event_mlock_kb
+	控制每个cpu环缓冲区的大小不按mlock限制计算
+perf_event_paranoid
+	控制非特权用户对性能事件系统的使用
+	-1	允许所有用户使用（几乎）所有事件。在没有CAP_IPC_LOCK的情况下，忽略perf_event_mlock_kb之后的mlock限制
+	> = 0	没有CAP_SYS_ADMIN的用户不允许ftrace函数跟踪点。禁止没有CAP_SYS_ADMIN的用户进行原始跟踪点访问
+	> = 1	禁止没有CAP_SYS_ADMIN的用户访问CPU事件
+pid_max
+	linux 最大pid
+poweroff_cmd
+	poweroff命令
+print-fatal-signals
+	打印出一些关于用户在内核控制台出错的一些信息 segfault info
+printk
+	 7 4 1 7
+	（1）第一个参数 7表示小于7优先级消息才会被输出到控制台。
+	（2）第二个参数4 表示默认的printk消息优先级别，即printk(“hell world”);优先级为4， 由于4<7，故可以被打印到控制台。
+	（3）第三个参数1 表示可接收的最高优先级，当printk disable控制台输出时,设置第一个参数为1，但是，从内核等级来看，还有优先级0，这个是printk最高级优先级，一般用于内核严重消息打印。比如内存错误或者 watchdog reset.也可以设置第一个和第三个参数为0
+	（3）第三个参数
+	(4）第四个参数7 默认控制台优先级，即第一个参数的默认优先级。
+printk_delay
+	内核printk消息的延迟，以毫秒数计算
+printk_ratelimit
+	指定了打印printk消息的最小时间间隔，默认5s
+printk_ratelimit_burst
+	在printk_ratelimit时间段内最多允许的消息数量
+pty 虚拟终端
+	max 最大4096
+	nr 当前pty
+
+printk_ratelimit_burst
+	
+panic_on_io_nmi
+	在io nmi的时候panic
+
+random:
+	boot_id	此文件是个只读文件，包含了一个随机字符串，在系统启动的时候会自动生成这个uuid
+	entropy_avail	此文件是个只读文件，给出了一个有效的熵(4096位)
+	poolsize	熵池大小，一般是4096位，可以改成任何大小
+	read_wakeup_threshold	该文件保存熵的长度，该长度用于唤醒因读取/dev/random设备而待机的进程(random设备的读缓冲区长度？)
+	uuid	此文件是个只读文件，包含了一个随机字符串，在random设备每次被读的时候生成
+	write_wakeup_threshold	该文件保存熵的长度，该长度用于唤醒因写入/dev/random设备而待机的进程(random设备的写缓冲区长度？)
+
+randomize_va_space
+	用于设置进程虚拟地址空间的随机化
+	0：关闭进程虚拟地址空间随机化
+	1：随机化进程虚拟地址空间中的mmap映射区的初始地址，栈空间的初始地址以及VDSO页的地址
+	2：在1的基础上加上堆区的随机化	
+	(VDSO是用于兼容不同内核与glibc的接口的机制)
+real-root-dev
+	根文件系统所在的设备号
+sched_autogroup_enabled
+	默认不启用。启用后创建任务组优化桌面程序的调度。
+sched_cfs_bandwidth_slice_us
+	各个CPU上的cfs_rq每次只从runtime中申请“一小片”时间。这个“时间片”可以通过/proc/sys/kernel/sched_cfs_bandwidth_slice_us(默认值为5ms)接口来调整。
+shed_child_runs_first
+	为防止额外的cow，让子进程先run,因为大部分子进程直接废弃原来的mm,exec一个新的进程，默认为0，即不开启
+sched_compat_yield
+	This option no longer does anything now that yield uses CFS buddies
+	在用CFS伙伴的时候这个参数已经没用了
+sched_domain
+	cpu X .......
+sched_features
+	sched_features是控制调度器特性的开关，每个bit表示调度器的一个特性。在sched_features.h文件中记录了全部的特性
+sched_latency_us
+	表示正在运行进程的所能运行的时间的最大值，即使只有一个处于running状态的进程，运行到这个时间也要重新调度一次,以纳秒为单位
+sched_migration_cost
+	该变量用来判断一个进程是否还是hot，如果进程的运行时间（now - p->se.exec_start）小于它，那么内核认为它的code还在cache里，所以该进程还是hot，那么在迁移的时候就不会考虑它
+sched_min_granularity_ns
+	进程最小运行时间 纳秒为单位
+sched_nr_migrate
+	在多CPU情况下进行负载均衡时，一次最多移动多少个进程到另一个CPU上
+sched_rr_timeslice_ms
+	用来指示round robin调度进程的间隔，这个间隔默认是100ms
+sched_rt_period_us
+	该参数与sched_rt_runtime_us一起决定了实时进程在以sched_rt_period为周期的时间内，实时进程最多能够运行的总的时间不能超过sched_rt_runtime_us
+sched_rt_runtime_us
+	该参数与sched_rt_period一起决定了实时进程在以sched_rt_period为周期的时间内，实时进程最多能够运行的总的时间不能超过sched_rt_runtime_us的时候
+sched_shares_window
+	指数型滑动窗口，在该窗口上平均分配负荷
+sched_time_avg
+	我们计算RT时间消耗的平均时间（以毫秒为单位）。
+sched_tunable_scaling
+	当内核试图调整sched_min_granularity，sched_latency和sched_wakeup_granularity这三个值的时候所使用的更新方法.
+	0：不调整
+	1：按照cpu个数以2为底的对数值进行调整
+	2：按照cpu的个数进行线性比例的调整
+sched_wakeup_granularity_ns
+	该变量表示进程被唤醒后至少应该运行的时间的基数，它只是用来判断某个进程是否应该抢占当前进程，并不代表它能够执行的最小时间（sysctl_sched_min_granularity），如果这个数值越小，那么发生抢占的概率也就越高
+sem
+	信号量
+	1.同一类信号的最多数量(semmsl)
+	2.系统中信号的最多数目，=semmni*semmsl (semmns)
+	3.每个semop系统调用所包含的最大的操作数(能调用的信号量的最多次数) (semopm)
+	4.系统中信号类型的数目的最大值，一个信号量标识符代表一个类型(semmni)
+shmall
+	系统上信号量可以使用的共享内存的总量
+shmmax
+	系统信号量所允许的最大共享内存段的大小
+shmmni
+	系统信号量系统共享内存段的最大数量
+shm_rmid_forced
+	强制SHM空间和一个进程联系在一起，所以可以通过杀死进程来释放内存
+	0：不设置
+	1：设置
+slow-work
+	慢工作机制，给很长工作时间的任务来提供的机制
+	max-threads 最大线程数
+	min-thread 最小线程数
+	vslow-percentage 在线程池中有多少比例的线程会用来执行非常慢的工作
+softlockup_panic
+	设置产生softlockup时是否抛出一个panic。Softlockup用于检测CPU可以响应中断，但是在长时间内不能调度（比如禁止抢占时间太长）的死锁情况。这个机制运行在一个hrtimer的中断上下文，每隔一段时间检测一下是否发生了调度，如果过长时间没发生调度，说明系统被死锁。
+	0：不产生panic
+	1：产生panic
+stack_tracer_enabled
+	启用stack tracer，内核的stack tracer机制，默认为0
+sysrq
+	该文件指定的值为非零，则激活键盘上的sysrq按键。这个按键用于给内核传递信息，用于紧急情况下重启系统。当遇到死机或者没有响应的时候，甚至连 tty 都进不去，可以尝试用 SysRq 重启计算机，默认为0
+tainted
+	1：加载非GPL module
+	0：强制加载module 
+threads-max
+	系统支持的最大线程数
+timer_migration
+	看代码是是否支持timer迁移,默认为0
+unkown_nmi_panic
+	该参数的值影响的行为（非屏蔽中断处理）。当这个值为非0，未知的NMI受阻，PANIC出现。这时，内核调试信息显示控制台，则可以减轻系统中的程序挂起。
+usermodehelper
+	linux cap(能力值)的掩码
+	bset
+	inheritable
+
+version
+	版本
+vsyscall64
+	是否使用vsyscall,看代码就是在一些内核系统调用上，启用新的代码分支
+watchdog
+	是否开启看门狗，默认为1
+watchdog_thresh
+	可以同时设置 watchdog_thresh参数来定义发现softlockup以后系统panic的时间，默认是10s, 也就是说20s后系统panic。最大能设到60s，也就是说，120s后启动系统panic
+
+进程stat状态码
+	D 无法打断的sleep(通常是IO)
+	R Running
+	S 可打断的sleep 等待一个事件去完成
+	T Stopped,一个job控制信号或者它被追踪了
+	W paging 2.6.xx内核之后废弃了
+	X dead 看不见
+	Z 僵尸进程
+
+	BSD formats 当stat keyword使用的时候
+	< 高优先级
+	N 低优先级
+	L 在内存里面有内存也被锁定
+	s 是一个会话leader
+	l 是多线程的， using CLONE_THREAD , NPTL即是如此
+	+ 是一个前台进程	 
+
+

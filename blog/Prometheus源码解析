@@ -1,0 +1,83 @@
+Prometheus源码解析
+
+memSeries 内存中的数据组织
+
+series => labels and chunks 数据集合
+
+index引用chunks，是用一个uint64,前面4个字节是段序列号，后面四个字节是文件内的偏移
+
+Label Index是做什么用的
+
+tombstones for 删除数据
+
+01BKGV7........6KKB12 # 块
+	|- chunks 512M 一个切分
+	|- 
+
+通过一个label name/value 找数据
+TOC->Label OffSet Table=>找到对应的Label Name/Value Pair => Label Index为了api/v1/lables取全标签 or 标签下的全取值用，这样可以对value正则匹配 => Posting Offset Table (Label Name/value)=>Postings(series)=>Series(chunk)  
+
+index
+	|->符号表
+	|->series
+		|->series_1
+			|-> labelsCount 标签数量
+			|-> l_i.name => 符号表
+			|-> l_i.value => 符号表
+			.....
+			|-> chunks count chunks的数量
+				|-> chunks0.mintt
+				|-> chunks0.maxt - chunks0.mint
+				|-> chunks0.data 指定chunks位置，前面4个是段序列号，后面四个是文件内的偏移
+				|-> chunks1.mint 走delta
+					... data  也是delta 只要加上chuns0.data就能找到原来的64位，和是否同一个文件无关
+				|-> CRC32
+		|->series_2
+			......
+	|->Label Index >>>>>>>对应源码r.Labels  貌似虽然可以由多种Labels组合，但是代码里面只使用了一个label，不会有多种组合
+		|->label => 此Label N种values 
+			[24|1|4|ref(value_0)|ref(value_1)|ref(value_2)|ref(value_3)]
+		 	可以多标签组合=>names表示这个所有多少个标签，而entries有多少个这种条目，每个条目大小为entries。
+		 	记录了这个多组合标签下所有的value组合
+
+	|->Label offset Table  label只有一个(源码中有写)
+		|-> len(name)
+		|-> name (bytes)
+		|-> offset 指向LabelIndex中对应label的初始
+
+	|->Postings 
+		|-> series_1
+			......
+		|-> series_N
+
+
+	|->Postings Offset Table
+		|-> name / value pair
+		|-> offset
+
+	|->TOC
+		|-> 所有table表的offset
+		|-> ref(symbols)
+			ref(series)
+			ref(label indices start)
+			ref(label offset table)
+			ref(postings start)
+			ref(posting offset table)
+
+
+WAL 日志
+
+倒排索引，求交集
+ posting1 (A,ValueA) 1 5 7 9 10 11
+ posting2 (B,Value B) 1 3 5 9 10 11
+ postint3 (B,Value C) 28
+那么 (A,ValueA)以及(B,ValueB) 对posting1 posting2 求交集即可
+
+
+gorilla
+85%的数据是在26小时之内的
+内存database
+
+
+
+
